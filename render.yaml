@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: moromokeh-essential-store
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app --workers 3 --threads 2 --timeout 30
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: MONGO_DB_NAME
+        value: moromokeh
+      - key: SITE_URL
+        sync: false
+      - key: SQUADCO_SECRET_KEY
+        sync: false
+      - key: SQUADCO_ENV
+        value: live
+      - key: ORDER_NOTIFY_EMAIL
+        sync: false
+    disk:
+      name: uploads
+      mountPath: /opt/render/project/src/static/uploads
+      sizeGB: 1

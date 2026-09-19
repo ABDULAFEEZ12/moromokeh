@@ -1,0 +1,108 @@
+{% extends "admin/base.html" %}
+{% block title %}{{ 'Edit Product' if product else 'New Product' }}{% endblock %}
+{% block content %}
+<div class="admin-topbar"><h1>{{ 'Edit Product' if product else 'New Product' }}</h1></div>
+
+<form method="post" enctype="multipart/form-data" class="admin-card">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+  <div class="field-row">
+    <div class="field">
+      <label for="name">Product name</label>
+      <input type="text" id="name" name="name" value="{{ form.get('name', '') }}" required>
+    </div>
+    <div class="field">
+      <label for="category_id">Category</label>
+      <select id="category_id" name="category_id" required>
+        <option value="">Select category</option>
+        {% for cat in categories %}
+        <option value="{{ cat._id }}" {{ 'selected' if (product and product.category_id == cat._id) }}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="description">Description</label>
+    <textarea id="description" name="description" rows="4">{{ form.get('description', '') }}</textarea>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="price">Price (₦)</label>
+      <input type="number" id="price" name="price" step="0.01" min="0" value="{{ form.get('price', '') }}" required>
+    </div>
+    <div class="field">
+      <label for="sale_price">Sale price (₦, optional)</label>
+      <input type="number" id="sale_price" name="sale_price" step="0.01" min="0" value="{{ form.get('sale_price', '') }}">
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Sizes &amp; stock per size (leave all blank if this product has no sizes)</label>
+    <div class="field-row" style="flex-wrap:wrap;display:flex;gap:12px;">
+      {% for size in size_presets.clothing + size_presets.numeric %}
+      <div style="width:90px;">
+        <label class="hint" for="size_qty_{{ size }}">{{ size }}</label>
+        <input type="number" min="0" id="size_qty_{{ size }}" name="size_qty_{{ size }}"
+               value="{{ product.size_stock.get(size, '') if product else '' }}">
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="stock">Total stock (only used if no sizes are set above)</label>
+    <input type="number" id="stock" name="stock" min="0" value="{{ product.stock if product and not product.sizes else '' }}">
+  </div>
+
+  <div class="field">
+    <label for="colors">Colors (comma separated, optional)</label>
+    <input type="text" id="colors_display" placeholder="Black, Wine, Beige"
+           value="{{ (product.colors if product else [])|join(', ') }}"
+           oninput="document.getElementById('colors_hidden').value = this.value">
+    {% for c in (product.colors if product else []) %}
+    <input type="hidden" name="color" value="{{ c }}" class="color-hidden-init">
+    {% endfor %}
+  </div>
+
+  <div class="field">
+    <label>Product images {{ '' if product else '(first image required)' }}</label>
+    {% if product and product.images %}
+    <div class="image-manager">
+      {% for img in product.images %}
+      <div class="img-slot">
+        <img src="{{ img.thumb }}" alt="">
+        <label><input type="checkbox" name="remove_image" value="{{ img.id }}"> Remove</label>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <input type="file" name="images" accept="image/png,image/jpeg,image/webp" multiple>
+    <p class="hint">JPG, PNG, or WebP. Images are automatically resized and compressed.</p>
+  </div>
+
+  <label class="checkbox-row"><input type="checkbox" name="is_featured" {{ 'checked' if product and product.is_featured }}> Featured</label>
+  <label class="checkbox-row"><input type="checkbox" name="is_new" {{ 'checked' if product and product.is_new }}> New Arrival</label>
+  <label class="checkbox-row"><input type="checkbox" name="is_bestseller" {{ 'checked' if product and product.is_bestseller }}> Bestseller</label>
+  <label class="checkbox-row"><input type="checkbox" name="is_published" {{ 'checked' if not product or product.is_published }}> Published (visible in store)</label>
+
+  <button type="submit" class="btn btn-primary">{{ 'Save Changes' if product else 'Create Product' }}</button>
+  <a href="{{ url_for('admin.products') }}" class="btn btn-light">Cancel</a>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+// Turn the comma-separated colors input into individual hidden `color` fields on submit.
+document.querySelector('.admin-main form').addEventListener('submit', function (e) {
+  var form = e.target;
+  form.querySelectorAll('.color-hidden-init').forEach(function (el) { el.remove(); });
+  var raw = document.getElementById('colors_display').value;
+  raw.split(',').map(function (s) { return s.trim(); }).filter(Boolean).forEach(function (c) {
+    var input = document.createElement('input');
+    input.type = 'hidden'; input.name = 'color'; input.value = c;
+    form.appendChild(input);
+  });
+});
+</script>
+{% endblock %}

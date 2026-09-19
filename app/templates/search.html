@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Search{% if query %} — "{{ query }}"{% endif %} — {{ store_name }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="listing-head">
+    <h1>{% if query %}Results for "{{ query }}"{% else %}Search{% endif %}</h1>
+    {% if query %}<p>{{ total }} product{{ 's' if total != 1 else '' }} found</p>{% endif %}
+  </div>
+
+  {% if not query %}
+  <div class="empty-state"><p>Type something into the search bar above to find products.</p></div>
+  {% elif products %}
+  <div class="product-grid">
+    {% for product in products %}
+      {% include "partials/_product_card.html" %}
+    {% endfor %}
+  </div>
+  {% include "partials/_pagination.html" %}
+  {% else %}
+  <div class="empty-state">
+    <p>No products matched "{{ query }}". Try a different word.</p>
+    <a href="{{ url_for('shop.shop') }}" class="btn btn-outline btn-sm">Browse all products</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ page_title }} — {{ store_name }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="listing-head">
+    <h1>{{ page_title }}</h1>
+    <p>{{ total }} product{{ 's' if total != 1 else '' }}</p>
+  </div>
+
+  <div class="listing-layout">
+    <aside class="filters">
+      <form method="get" action="{{ request.path }}">
+        <h4>Sort by</h4>
+        <select name="sort" onchange="this.form.submit()">
+          <option value="newest" {{ 'selected' if sort == 'newest' }}>Newest</option>
+          <option value="price_asc" {{ 'selected' if sort == 'price_asc' }}>Price: Low to High</option>
+          <option value="price_desc" {{ 'selected' if sort == 'price_desc' }}>Price: High to Low</option>
+          <option value="name_asc" {{ 'selected' if sort == 'name_asc' }}>Name: A–Z</option>
+          <option value="bestseller" {{ 'selected' if sort == 'bestseller' }}>Bestsellers</option>
+        </select>
+
+        <h4>Price (₦)</h4>
+        <div class="field-row">
+          <input type="number" name="min_price" placeholder="Min" value="{{ request.args.get('min_price', '') }}" min="0">
+          <input type="number" name="max_price" placeholder="Max" value="{{ request.args.get('max_price', '') }}" min="0">
+        </div>
+
+        <h4>Availability</h4>
+        <label><input type="checkbox" name="sale" value="1" {{ 'checked' if request.args.get('sale') == '1' }} onchange="this.form.submit()"> On Sale</label>
+        <label><input type="checkbox" name="new" value="1" {{ 'checked' if request.args.get('new') == '1' }} onchange="this.form.submit()"> New Arrivals</label>
+        <label><input type="checkbox" name="in_stock" value="1" {{ 'checked' if request.args.get('in_stock') == '1' }} onchange="this.form.submit()"> In Stock Only</label>
+
+        <button type="submit" class="btn btn-outline btn-sm" style="margin-top:14px;width:100%;">Apply</button>
+      </form>
+
+      <h4>Categories</h4>
+      <a href="{{ url_for('shop.shop') }}" class="{{ 'active' if request.endpoint == 'shop.shop' and not request.args.get('category') }}">All Products</a>
+      {% for cat in categories %}
+      <a href="{{ url_for('shop.category', slug=cat.slug) }}" class="{{ 'active' if active_category and active_category.slug == cat.slug }}">{{ cat.name }}</a>
+      {% endfor %}
+    </aside>
+
+    <div>
+      {% if products %}
+      <div class="product-grid">
+        {% for product in products %}
+          {% include "partials/_product_card.html" %}
+        {% endfor %}
+      </div>
+      {% include "partials/_pagination.html" %}
+      {% else %}
+      <div class="empty-state">
+        <p>No products match these filters yet.</p>
+        <a href="{{ url_for('shop.shop') }}" class="btn btn-outline btn-sm">Clear filters</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

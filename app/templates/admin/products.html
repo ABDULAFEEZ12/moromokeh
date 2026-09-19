@@ -1,0 +1,48 @@
+{% extends "admin/base.html" %}
+{% block title %}Products{% endblock %}
+{% block content %}
+<div class="admin-topbar">
+  <h1>Products</h1>
+  <a href="{{ url_for('admin.product_new') }}" class="btn btn-primary btn-sm">+ New Product</a>
+</div>
+
+<form method="get" style="margin-bottom:18px;max-width:320px;">
+  <input type="search" name="q" placeholder="Search products" value="{{ q }}" class="field" style="padding:10px 12px;border:1px solid var(--border-strong);border-radius:3px;width:100%;">
+</form>
+
+<div class="admin-card" style="padding:0;">
+  <table class="admin-table">
+    <thead><tr><th></th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>{% if product.images %}<img src="{{ product.images[0].thumb }}" alt=""> {% endif %}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.category_name }}</td>
+        <td>
+          {% if product.sale_price %}₦{{ '%.0f'|format(product.sale_price) }} <s style="color:var(--text-faint)">₦{{ '%.0f'|format(product.price) }}</s>
+          {% else %}₦{{ '%.0f'|format(product.price) }}{% endif %}
+        </td>
+        <td>{{ product.stock }}</td>
+        <td>
+          {% if not product.is_published %}<span class="pill status-cancelled">Unpublished</span>
+          {% elif product.stock <= 0 %}<span class="pill status-failed">Sold Out</span>
+          {% else %}<span class="pill status-paid">Live</span>{% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('admin.product_edit', product_id=product._id) }}">Edit</a>
+          &middot;
+          <form method="post" action="{{ url_for('admin.product_delete', product_id=product._id) }}" style="display:inline;" onsubmit="return confirm('Delete this product?');">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" style="background:none;border:0;color:var(--error);cursor:pointer;padding:0;">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7">No products yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "partials/_pagination.html" %}
+{% endblock %}

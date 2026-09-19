@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Order {{ order.order_number }} — {{ store_name }}{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="order-summary-card">
+    <p class="status-pill status-{{ order.payment_status }}">{{ order.payment_status }}</p>
+    <h1>Order {{ order.order_number }}</h1>
+
+    {% if order.payment_status == 'paid' %}
+      <p>Thank you — your order has been received and paid. We'll be in touch on {{ order.customer.phone }} about delivery.</p>
+    {% elif order.payment_status == 'pending' %}
+      <p>This order hasn't been paid yet. If payment isn't set up online, please call or WhatsApp us on <a href="tel:{{ store_phone }}">{{ store_phone }}</a> to complete it.</p>
+      <form method="post" action="{{ url_for('checkout.retry_payment', order_number=order.order_number) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-primary">Retry Payment</button>
+      </form>
+    {% else %}
+      <p>Payment could not be completed. Please contact us on <a href="tel:{{ store_phone }}">{{ store_phone }}</a>.</p>
+    {% endif %}
+
+    <h3 style="margin-top:28px;">Items</h3>
+    {% for item in order['items'] %}
+    <div class="checkout-item">
+      <span class="name">{{ item.name }}{% if item.size %} (Size {{ item.size }}){% endif %} &times;{{ item.qty }}</span>
+      <span class="meta">{{ item.line_total|naira }}</span>
+    </div>
+    {% endfor %}
+    <div class="summary-row" style="margin-top:14px;"><span>Subtotal</span><strong>{{ order.subtotal|naira }}</strong></div>
+    <div class="summary-row"><span>Delivery</span><strong>{{ order.delivery_fee|naira }}</strong></div>
+    <div class="summary-row total"><span>Total</span><strong>{{ order.total|naira }}</strong></div>
+
+    <h3 style="margin-top:28px;">Delivery to</h3>
+    <p>{{ order.customer.name }}<br>{{ order.customer.address }}, {{ order.customer.city }}, {{ order.customer.state }}<br>{{ order.customer.phone }}</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Contact — {{ store_name }}{% endblock %}
+{% block content %}
+<div class="page-narrow">
+  <h1>Contact Us</h1>
+  <p>Call or WhatsApp <a href="tel:{{ store_phone }}">{{ store_phone }}</a>, or send us a message below.</p>
+  <form method="post" action="{{ url_for('main.contact') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" required>
+    </div>
+    <div class="field">
+      <label for="email">Email (optional)</label>
+      <input type="email" id="email" name="email">
+    </div>
+    <div class="field">
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" name="subject">
+    </div>
+    <div class="field">
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Send Message</button>
+  </form>
+</div>
+{% endblock %}

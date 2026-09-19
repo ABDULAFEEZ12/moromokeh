@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+{% block title %}Staff{% endblock %}
+{% block content %}
+<div class="admin-topbar"><h1>Staff</h1></div>
+
+<div class="admin-card" style="max-width:420px;">
+  <h3>Add Admin</h3>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" minlength="8" required>
+    </div>
+    <div class="field">
+      <label for="confirm_password">Confirm password</label>
+      <input type="password" id="confirm_password" name="confirm_password" minlength="8" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Create Admin</button>
+  </form>
+</div>
+
+<div class="admin-card" style="padding:0;">
+  <table class="admin-table">
+    <thead><tr><th>Email</th><th>Added</th></tr></thead>
+    <tbody>
+      {% for a in admins %}
+      <tr><td>{{ a.email }}</td><td>{{ a.created_at.strftime('%d %b %Y') }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

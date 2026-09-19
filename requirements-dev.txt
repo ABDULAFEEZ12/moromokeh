@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest==8.3.2
+mongomock==4.1.2
+setuptools<81  # mongomock imports pkg_resources, which newer setuptools no longer ships

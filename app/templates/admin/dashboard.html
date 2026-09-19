@@ -1,0 +1,58 @@
+{% extends "admin/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="admin-topbar"><h1>Dashboard</h1></div>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="label">Total Orders</div><div class="value">{{ total_orders }}</div></div>
+  <div class="stat-card"><div class="label">Paid Orders</div><div class="value">{{ paid_orders }}</div></div>
+  <div class="stat-card"><div class="label">Pending Orders</div><div class="value">{{ pending_orders }}</div></div>
+  <div class="stat-card"><div class="label">Revenue (Paid)</div><div class="value">{{ revenue|naira }}</div></div>
+</div>
+
+<div class="stat-grid" style="grid-template-columns: repeat(2, 1fr);">
+  <div class="stat-card"><div class="label">Total Products</div><div class="value">{{ total_products }}</div></div>
+  <div class="stat-card"><div class="label">Low Stock (&le;{{ 3 }})</div><div class="value">{{ low_stock|length }}</div></div>
+</div>
+
+<div class="admin-card">
+  <h3>Recent Orders</h3>
+  {% if recent_orders %}
+  <table class="admin-table">
+    <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Payment</th><th>Fulfillment</th><th></th></tr></thead>
+    <tbody>
+      {% for order in recent_orders %}
+      <tr>
+        <td>{{ order.order_number }}</td>
+        <td>{{ order.customer.name }}</td>
+        <td>{{ order.total|naira }}</td>
+        <td><span class="pill status-{{ order.payment_status }}">{{ order.payment_status }}</span></td>
+        <td><span class="pill status-{{ order.fulfillment_status }}">{{ order.fulfillment_status }}</span></td>
+        <td><a href="{{ url_for('admin.order_detail', order_number=order.order_number) }}">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No orders yet.</p>
+  {% endif %}
+</div>
+
+{% if low_stock %}
+<div class="admin-card">
+  <h3>Low Stock Products</h3>
+  <table class="admin-table">
+    <thead><tr><th>Product</th><th>Stock</th><th></th></tr></thead>
+    <tbody>
+      {% for product in low_stock %}
+      <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.stock }}</td>
+        <td><a href="{{ url_for('admin.product_edit', product_id=product._id) }}">Edit</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}{{ store_name }} — Fashion & Lifestyle Essentials{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div>
+      <p class="hero-eyebrow">Women's Fashion &amp; Lifestyle</p>
+      <h1>Moromokeh Essential Store</h1>
+      <p class="lead">Stylish, quality and affordable women's fashion and lifestyle essentials — picked to make getting dressed easy.</p>
+      <div class="hero-ctas">
+        <a href="{{ url_for('shop.shop') }}" class="btn btn-primary">Shop Now</a>
+        <a href="{{ url_for('shop.new_arrivals') }}" class="btn btn-outline">Explore New Arrivals</a>
+      </div>
+    </div>
+    <div class="hero-media">
+      {% if featured and featured[0].image_url %}
+        <img src="{{ featured[0].image_url }}" alt="{{ featured[0].name }}">
+      {% else %}
+        <div class="hero-placeholder">Product photography coming soon<br>— upload from the admin dashboard</div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if categories %}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>Shop by Category</h2>
+      <a href="{{ url_for('shop.shop') }}">View all</a>
+    </div>
+    <div class="category-grid">
+      {% for cat in categories[:8] %}
+      <a href="{{ url_for('shop.category', slug=cat.slug) }}" class="category-card">
+        {% if cat.image %}
+          <img src="{{ cat.image }}" alt="{{ cat.name }}">
+          <span class="label">{{ cat.name }}</span>
+        {% else %}
+          <span class="label-plain">{{ cat.name }}</span>
+        {% endif %}
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if featured %}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>Featured</h2>
+      <a href="{{ url_for('shop.shop') }}">Shop all</a>
+    </div>
+    <div class="product-grid">
+      {% for product in featured %}
+        {% include "partials/_product_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if new_arrivals %}
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>New Arrivals</h2>
+      <a href="{{ url_for('shop.new_arrivals') }}">See all</a>
+    </div>
+    <div class="product-grid">
+      {% for product in new_arrivals %}
+        {% include "partials/_product_card.html" %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if not featured and not new_arrivals %}
+<section class="section">
+  <div class="container empty-state">
+    <p>Products are on the way. Check back soon, or visit the admin dashboard to add your first product.</p>
+  </div>
+</section>
+{% endif %}
+
+<section class="section">
+  <div class="container">
+    <div class="section-head"><h2>Why shop with us</h2></div>
+    <div class="trust-grid">
+      <div class="trust-item">
+        <h3>Quality products</h3>
+        <p>Every item is chosen for how it looks and how it holds up.</p>
+      </div>
+      <div class="trust-item">
+        <h3>Affordable prices</h3>
+        <p>Good style shouldn't cost a fortune.</p>
+      </div>
+      <div class="trust-item">
+        <h3>Convenient shopping</h3>
+        <p>Browse, order and pay in a few taps, from your phone.</p>
+      </div>
+      <div class="trust-item">
+        <h3>Real support</h3>
+        <p>Reach us directly by phone or WhatsApp on {{ store_phone }}.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "admin/base.html" %}
+{% block title %}Order {{ order.order_number }}{% endblock %}
+{% block content %}
+<div class="admin-topbar">
+  <h1>Order {{ order.order_number }}</h1>
+  <div>
+    <span class="pill status-{{ order.payment_status }}">{{ order.payment_status }}</span>
+    <span class="pill status-{{ order.fulfillment_status }}">{{ order.fulfillment_status }}</span>
+  </div>
+</div>
+
+{% if order.stock_issue %}
+<div class="flash flash-error" style="margin-bottom:18px;">
+  One or more items on this order couldn't be fully deducted from stock at the time of payment - double-check inventory before fulfilling.
+</div>
+{% endif %}
+
+<div class="field-row" style="align-items:start;">
+  <div class="admin-card">
+    <h3>Items</h3>
+    <table class="admin-table">
+      <thead><tr><th>Product</th><th>Size</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+      <tbody>
+        {% for item in order['items'] %}
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.size or '—' }}</td>
+          <td>{{ item.qty }}</td>
+          <td>{{ item.price|naira }}</td>
+          <td>{{ item.line_total|naira }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="summary-row" style="margin-top:14px;"><span>Subtotal</span><strong>{{ order.subtotal|naira }}</strong></div>
+    <div class="summary-row"><span>Delivery</span><strong>{{ order.delivery_fee|naira }}</strong></div>
+    <div class="summary-row total"><span>Total</span><strong>{{ order.total|naira }}</strong></div>
+  </div>
+
+  <div class="admin-card">
+    <h3>Customer</h3>
+    <p>{{ order.customer.name }}<br>
+    <a href="tel:{{ order.customer.phone }}">{{ order.customer.phone }}</a><br>
+    {% if order.customer.email %}{{ order.customer.email }}<br>{% endif %}
+    {{ order.customer.address }}, {{ order.customer.city }}, {{ order.customer.state }}</p>
+    {% if order.customer.note %}<p><strong>Note:</strong> {{ order.customer.note }}</p>{% endif %}
+
+    <h3 style="margin-top:24px;">Payment</h3>
+    <p class="hint">Method: {{ order.payment_method or '—' }}</p>
+    <p class="hint">Our reference: {{ order.payment_reference }}</p>
+    {% if order.gateway_reference %}<p class="hint">SquadCo reference: {{ order.gateway_reference }}</p>{% endif %}
+    {% if order.payment_channel %}<p class="hint">Channel: {{ order.payment_channel }}</p>{% endif %}
+    {% if order.verified_amount_kobo %}<p class="hint">SquadCo confirmed amount: {{ (order.verified_amount_kobo / 100)|naira }}</p>{% endif %}
+    {% if order.finalized_via %}<p class="hint">Confirmed via: {{ order.finalized_via }}</p>{% endif %}
+    <p class="hint">Placed: {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+    {% if order.paid_at %}<p class="hint">Paid: {{ order.paid_at.strftime('%d %b %Y, %I:%M %p') }}</p>{% endif %}
+    <p class="hint">Last updated: {{ order.updated_at.strftime('%d %b %Y, %I:%M %p') }}</p>
+
+    <h3 style="margin-top:24px;">Update Fulfillment</h3>
+    <form method="post" action="{{ url_for('admin.order_update_status', order_number=order.order_number) }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <select name="fulfillment_status">
+        {% for s in statuses %}
+        <option value="{{ s }}" {{ 'selected' if order.fulfillment_status == s }}>{{ s|capitalize }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary btn-sm" style="margin-top:10px;">Update</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

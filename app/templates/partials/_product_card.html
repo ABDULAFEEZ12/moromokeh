@@ -1,0 +1,16 @@
+<article class="product-card">
+  <a href="{{ url_for('shop.product_detail', slug=product.slug) }}" class="thumb">
+    {% if product.on_sale %}<span class="badge badge-sale">Sale</span>
+    {% elif product.is_new %}<span class="badge">New</span>
+    {% elif product.is_bestseller %}<span class="badge">Bestseller</span>{% endif %}
+    <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy" width="400" height="500">
+    {% if not product.in_stock %}<span class="badge-out">Sold Out</span>{% endif %}
+  </a>
+  <a href="{{ url_for('shop.product_detail', slug=product.slug) }}">
+    <h3>{{ product.name }}</h3>
+  </a>
+  <div class="price">
+    {{ product.display_price|naira }}
+    {% if product.on_sale %}<span class="compare">{{ product.price|naira }}</span>{% endif %}
+  </div>
+</article>

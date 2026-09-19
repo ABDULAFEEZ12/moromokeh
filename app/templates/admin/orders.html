@@ -1,0 +1,42 @@
+{% extends "admin/base.html" %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<div class="admin-topbar"><h1>Orders</h1></div>
+
+<form method="get" class="field-row" style="max-width:520px;margin-bottom:18px;">
+  <select name="payment_status" onchange="this.form.submit()">
+    <option value="">All payment statuses</option>
+    <option value="pending" {{ 'selected' if payment_status == 'pending' }}>Pending</option>
+    <option value="paid" {{ 'selected' if payment_status == 'paid' }}>Paid</option>
+    <option value="failed" {{ 'selected' if payment_status == 'failed' }}>Failed</option>
+  </select>
+  <select name="fulfillment_status" onchange="this.form.submit()">
+    <option value="">All fulfillment statuses</option>
+    {% for s in statuses %}
+    <option value="{{ s }}" {{ 'selected' if fulfillment_status == s }}>{{ s|capitalize }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<div class="admin-card" style="padding:0;">
+  <table class="admin-table">
+    <thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Payment</th><th>Fulfillment</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+      {% for order in orders %}
+      <tr>
+        <td>{{ order.order_number }}{% if order.stock_issue %} <span class="pill status-failed">Stock issue</span>{% endif %}</td>
+        <td>{{ order.customer.name }}<br><span class="hint">{{ order.customer.phone }}</span></td>
+        <td>{{ order.total|naira }}</td>
+        <td><span class="pill status-{{ order.payment_status }}">{{ order.payment_status }}</span></td>
+        <td><span class="pill status-{{ order.fulfillment_status }}">{{ order.fulfillment_status }}</span></td>
+        <td>{{ order.created_at.strftime('%d %b %Y') }}</td>
+        <td><a href="{{ url_for('admin.order_detail', order_number=order.order_number) }}">View</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7">No orders match these filters.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% include "partials/_pagination.html" %}
+{% endblock %}

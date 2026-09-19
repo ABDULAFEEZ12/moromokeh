@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}{{ product.name }} — {{ store_name }}{% endblock %}
+{% block meta_description %}{{ product.meta_description or product.name }}{% endblock %}
+{% block canonical %}<link rel="canonical" href="{{ config.SITE_URL }}{{ url_for('shop.product_detail', slug=product.slug) }}">{% endblock %}
+{% block og_image %}{% if product.image_url %}<meta property="og:image" content="{{ product.image_url }}">{% endif %}{% endblock %}
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": {{ product.name|tojson }},
+  "description": {{ (product.meta_description or product.name)|tojson }},
+  "image": {{ product.image_url|tojson }},
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "NGN",
+    "price": {{ product.display_price }},
+    "availability": "{{ 'https://schema.org/InStock' if product.in_stock else 'https://schema.org/OutOfStock' }}"
+  }
+}
+</script>
+{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="product-detail">
+    <div>
+      <div class="gallery-main">
+        <img id="galleryMain" src="{{ product.image_url }}" alt="{{ product.name }}">
+      </div>
+      {% if product.gallery|length > 1 %}
+      <div class="gallery-thumbs">
+        {% for img in product.gallery %}
+        <img src="{{ img.thumb }}" data-large="{{ img.large or img.medium }}" alt="{{ product.name }}" class="{{ 'active' if loop.first }}">
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <div>
+      {% if product.category_name %}<p class="pd-category">{{ product.category_name }}</p>{% endif %}
+      <h1 class="pd-title">{{ product.name }}</h1>
+      <p class="pd-price">
+        {{ product.display_price|naira }}
+        {% if product.on_sale %}<span class="compare">{{ product.price|naira }}</span> <span class="badge badge-sale" style="position:static;display:inline-block;">-{{ product.discount_percent }}%</span>{% endif %}
+      </p>
+      {% if product.description %}<p class="pd-desc">{{ product.description }}</p>{% endif %}
+
+      {% if not product.in_stock %}
+        <p class="stock-note out">Currently sold out.</p>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('cart.add') }}" id="addToCartForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="product_id" value="{{ product._id }}">
+        <input type="hidden" name="next" value="{{ request.path }}">
+
+        {% if product.sizes %}
+        <div class="option-group">
+          <h4>Size</h4>
+          <div class="swatches">
+            {% for size in product.sizes %}
+            {% set available = product.size_stock.get(size, 0) %}
+            <label class="size-option {{ 'disabled' if available <= 0 }}">
+              <input type="radio" name="size" value="{{ size }}" {{ 'disabled' if available <= 0 }} {{ 'required' if product.sizes }}>
+              {{ size }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        {% if product.colors %}
+        <div class="option-group">
+          <h4>Color</h4>
+          <div class="swatches">
+            {% for c in product.colors %}
+            <label class="size-option">
+              <input type="radio" name="color" value="{{ c }}" {{ 'checked' if loop.first }}>
+              {{ c }}
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="option-group">
+          <h4>Quantity</h4>
+          <div class="qty-stepper">
+            <button type="button" data-step="-1">&minus;</button>
+            <input type="number" name="qty" value="1" min="1" max="10">
+            <button type="button" data-step="1">&plus;</button>
+          </div>
+        </div>
+
+        <div class="pd-actions">
+          <button type="submit" class="btn btn-outline" {{ 'disabled' if not product.in_stock }}>Add to Cart</button>
+          <button type="submit" formaction="{{ url_for('cart.buy_now') }}" class="btn btn-primary" {{ 'disabled' if not product.in_stock }}>Buy Now</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if related %}
+  <section class="section">
+    <div class="section-head"><h2>You may also like</h2></div>
+    <div class="product-grid">
+      {% for product in related %}
+        {% include "partials/_product_card.html" %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+{% endblock %}

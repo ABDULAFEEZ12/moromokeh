@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<div class="admin-topbar"><h1>Settings</h1></div>
+
+<div class="admin-card" style="max-width:420px;">
+  <h3>Delivery Fee</h3>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field">
+      <label for="delivery_fee">Flat delivery fee (₦)</label>
+      <input type="number" id="delivery_fee" name="delivery_fee" min="0" step="0.01" value="{{ delivery_fee }}">
+      <p class="hint">Applied to every order at checkout.</p>
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+  </form>
+</div>
+{% endblock %}

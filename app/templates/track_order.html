@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Track Order — {{ store_name }}{% endblock %}
+{% block content %}
+<div class="page-narrow">
+  <h1>Track Your Order</h1>
+  <p>Enter your order number and the phone number you used at checkout.</p>
+  <form method="post" action="{{ url_for('main.track_order') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field">
+      <label for="order_number">Order number</label>
+      <input type="text" id="order_number" name="order_number" placeholder="MRK-20260918-7F3K" required>
+    </div>
+    <div class="field">
+      <label for="phone">Phone number</label>
+      <input type="tel" id="phone" name="phone" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Track Order</button>
+  </form>
+
+  {% if order %}
+  <div class="order-summary-card" style="margin-left:0;">
+    <p class="status-pill status-{{ order.payment_status }}">{{ order.payment_status }}</p>
+    <h3>{{ order.order_number }} &middot; {{ order.fulfillment_status }}</h3>
+    <p><a href="{{ url_for('checkout.order_status', order_number=order.order_number) }}">View full order details &rarr;</a></p>
+  </div>
+  {% elif searched %}
+  <p style="margin-top:20px;">No matching order found.</p>
+  {% endif %}
+</div>
+{% endblock %}
