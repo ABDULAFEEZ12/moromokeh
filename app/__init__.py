@@ -111,9 +111,12 @@ def _register_context(app):
             nav_categories = list_active_categories(get_db())[:6]
         except Exception:
             nav_categories = []
+        phone_digits = "".join(ch for ch in app.config["STORE_PHONE"] if ch.isdigit())
+        whatsapp_digits = "234" + phone_digits[1:] if phone_digits.startswith("0") else phone_digits
         return dict(
             store_name=app.config["STORE_NAME"],
             store_phone=app.config["STORE_PHONE"],
+            store_whatsapp_url=f"https://wa.me/{whatsapp_digits}",
             store_tiktok=app.config["STORE_TIKTOK"],
             store_instagram=app.config["STORE_INSTAGRAM"],
             store_description=app.config["STORE_DESCRIPTION"],

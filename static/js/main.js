@@ -46,6 +46,28 @@
     });
   });
 
+  // Scroll-reveal: fade+rise elements marked .reveal into place once, the
+  // first time they enter the viewport. Progressive enhancement only - the
+  // CSS keeps .reveal fully visible unless JS adds .is-visible, and this
+  // script itself just adds that class, so content is never hidden if JS
+  // fails to run.
+  if ("IntersectionObserver" in window) {
+    var revealTargets = document.querySelectorAll(".reveal");
+    if (revealTargets.length) {
+      var revealObserver = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12 });
+      revealTargets.forEach(function (el) { revealObserver.observe(el); });
+    }
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("is-visible"); });
+  }
+
   // Flash messages auto-dismiss
   document.querySelectorAll(".flash").forEach(function (el) {
     setTimeout(function () {

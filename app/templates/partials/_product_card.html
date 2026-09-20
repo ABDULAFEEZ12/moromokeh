@@ -34,4 +34,7 @@
       <span class="save">-{{ product.discount_percent }}%</span>
     {% endif %}
   </div>
+  {% if product.low_stock %}
+  <span class="stock-tag low-stock"><span class="dot"></span>Only {{ product.stock|int }} left</span>
+  {% endif %}
 </article>

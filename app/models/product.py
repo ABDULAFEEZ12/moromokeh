@@ -6,6 +6,7 @@ listing page is always a single indexed `find()` against `products`.
 """
 
 PLACEHOLDER_IMAGE = "/static/images/product-placeholder.svg"
+LOW_STOCK_THRESHOLD = 3
 
 
 def primary_image(product, size="medium"):
@@ -35,6 +36,7 @@ def enrich(product):
         product["in_stock"] = any(qty > 0 for qty in size_stock.values())
     else:
         product["in_stock"] = float(product.get("stock") or 0) > 0
+    product["low_stock"] = product["in_stock"] and 0 < float(product.get("stock") or 0) <= LOW_STOCK_THRESHOLD
     return product
 
 
