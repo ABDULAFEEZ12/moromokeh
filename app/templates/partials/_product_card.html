@@ -4,7 +4,10 @@
       {% if product.on_sale %}<span class="badge badge-sale">Sale</span>
       {% elif product.is_new %}<span class="badge">New</span>
       {% elif product.is_bestseller %}<span class="badge">Bestseller</span>{% endif %}
-      <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy" width="400" height="500">
+      <img class="img-a" src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy" width="400" height="500">
+      {% if product.gallery|length > 1 %}
+      <img class="img-b" src="{{ product.gallery[1].medium or product.gallery[1].large or product.gallery[1].thumb }}" alt="" loading="lazy" width="400" height="500">
+      {% endif %}
     </a>
     {% if not product.in_stock %}
       <span class="badge-out">Sold Out</span>

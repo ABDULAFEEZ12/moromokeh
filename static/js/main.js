@@ -4,10 +4,14 @@
   // Mobile nav
   var toggle = document.getElementById("navToggle");
   var nav = document.getElementById("mainNav");
+  var header = document.querySelector(".site-header");
   if (toggle && nav) {
     toggle.addEventListener("click", function () {
       var open = nav.classList.toggle("open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open && header) {
+        nav.style.top = header.getBoundingClientRect().bottom + "px";
+      }
     });
   }
 
