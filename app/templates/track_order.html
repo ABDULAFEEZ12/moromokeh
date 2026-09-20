@@ -2,7 +2,7 @@
 {% block title %}Track Order — {{ store_name }}{% endblock %}
 {% block content %}
 <div class="page-narrow">
-  <h1>Track Your Order</h1>
+  <h1 class="page-title">Track Your Order</h1>
   <p>Enter your order number and the phone number you used at checkout.</p>
   <form method="post" action="{{ url_for('main.track_order') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

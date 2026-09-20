@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container">
   <div class="listing-head">
-    <h1>{% if query %}Results for "{{ query }}"{% else %}Search{% endif %}</h1>
+    <h1 class="page-title">{% if query %}Results for "{{ query }}"{% else %}Search{% endif %}</h1>
     {% if query %}<p>{{ total }} product{{ 's' if total != 1 else '' }} found</p>{% endif %}
   </div>
 

@@ -2,7 +2,7 @@
 {% block title %}Your Cart — {{ store_name }}{% endblock %}
 {% block content %}
 <div class="container">
-  <h1>Your Cart</h1>
+  <h1 class="page-title">Your Cart</h1>
 
   {% if not cart.lines %}
   <div class="empty-cart">
@@ -43,6 +43,7 @@
     </div>
 
     <aside class="summary-box">
+      <h3>Order Summary</h3>
       <div class="summary-row"><span>Subtotal</span><strong>{{ cart.subtotal|naira }}</strong></div>
       <div class="summary-row"><span>Delivery</span><span>Calculated at checkout</span></div>
       <div class="summary-row total"><span>Total</span><strong>{{ cart.subtotal|naira }}</strong></div>

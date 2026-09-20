@@ -1,16 +1,37 @@
 <article class="product-card">
-  <a href="{{ url_for('shop.product_detail', slug=product.slug) }}" class="thumb">
-    {% if product.on_sale %}<span class="badge badge-sale">Sale</span>
-    {% elif product.is_new %}<span class="badge">New</span>
-    {% elif product.is_bestseller %}<span class="badge">Bestseller</span>{% endif %}
-    <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy" width="400" height="500">
-    {% if not product.in_stock %}<span class="badge-out">Sold Out</span>{% endif %}
-  </a>
+  <div class="thumb">
+    <a href="{{ url_for('shop.product_detail', slug=product.slug) }}">
+      {% if product.on_sale %}<span class="badge badge-sale">Sale</span>
+      {% elif product.is_new %}<span class="badge">New</span>
+      {% elif product.is_bestseller %}<span class="badge">Bestseller</span>{% endif %}
+      <img src="{{ product.image_url }}" alt="{{ product.name }}" loading="lazy" width="400" height="500">
+    </a>
+    {% if not product.in_stock %}
+      <span class="badge-out">Sold Out</span>
+    {% elif product.sizes %}
+      <a href="{{ url_for('shop.product_detail', slug=product.slug) }}" class="quick-add-btn" aria-label="Select options for {{ product.name }}">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    {% else %}
+      <form method="post" action="{{ url_for('cart.add') }}" class="quick-add-btn">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="product_id" value="{{ product._id }}">
+        <input type="hidden" name="qty" value="1">
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit" aria-label="Add {{ product.name }} to cart">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </form>
+    {% endif %}
+  </div>
   <a href="{{ url_for('shop.product_detail', slug=product.slug) }}">
     <h3>{{ product.name }}</h3>
   </a>
   <div class="price">
     {{ product.display_price|naira }}
-    {% if product.on_sale %}<span class="compare">{{ product.price|naira }}</span>{% endif %}
+    {% if product.on_sale %}
+      <span class="compare">{{ product.price|naira }}</span>
+      <span class="save">-{{ product.discount_percent }}%</span>
+    {% endif %}
   </div>
 </article>

@@ -2,7 +2,7 @@
 {% block title %}Contact — {{ store_name }}{% endblock %}
 {% block content %}
 <div class="page-narrow">
-  <h1>Contact Us</h1>
+  <h1 class="page-title">Contact Us</h1>
   <p>Call or WhatsApp <a href="tel:{{ store_phone }}">{{ store_phone }}</a>, or send us a message below.</p>
   <form method="post" action="{{ url_for('main.contact') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">

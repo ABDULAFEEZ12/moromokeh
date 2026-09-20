@@ -4,7 +4,7 @@
 <div class="container">
   <div class="order-summary-card">
     <p class="status-pill status-{{ order.payment_status }}">{{ order.payment_status }}</p>
-    <h1>Order {{ order.order_number }}</h1>
+    <h1 class="page-title">Order {{ order.order_number }}</h1>
 
     {% if order.payment_status == 'paid' %}
       <p>Thank you — your order has been received and paid. We'll be in touch on {{ order.customer.phone }} about delivery.</p>

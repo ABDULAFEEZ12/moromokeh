@@ -2,7 +2,7 @@
 {% block title %}Something Went Wrong — {{ store_name }}{% endblock %}
 {% block content %}
 <div class="page-narrow text-center">
-  <h1>Something went wrong</h1>
+  <h1 class="page-title">Something went wrong</h1>
   <p>{{ message or "We hit an unexpected error. Please try again in a moment." }}</p>
   <a href="{{ url_for('main.home') }}" class="btn btn-primary">Back to Home</a>
 </div>
