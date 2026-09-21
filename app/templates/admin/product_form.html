@@ -18,7 +18,13 @@
         {% for cat in categories %}
         <option value="{{ cat._id }}" {{ 'selected' if (product and product.category_id == cat._id) }}>{{ cat.name }}</option>
         {% endfor %}
+        <option value="__new__">+ Add new category&hellip;</option>
       </select>
+      <div id="newCategoryRow" class="field-row" style="display:none;margin-top:8px;">
+        <input type="text" id="newCategoryName" placeholder="Category name" style="height:38px;">
+        <button type="button" id="newCategoryAdd" class="btn btn-light btn-sm">Add</button>
+      </div>
+      <p class="hint" id="newCategoryHint" style="display:none;"></p>
     </div>
   </div>
 
@@ -104,5 +110,68 @@ document.querySelector('.admin-main form').addEventListener('submit', function (
     form.appendChild(input);
   });
 });
+
+// Inline "add new category" without leaving the product form.
+(function () {
+  var select = document.getElementById('category_id');
+  var row = document.getElementById('newCategoryRow');
+  var input = document.getElementById('newCategoryName');
+  var addBtn = document.getElementById('newCategoryAdd');
+  var hint = document.getElementById('newCategoryHint');
+  if (!select || !row || !input || !addBtn) return;
+
+  select.addEventListener('change', function () {
+    if (select.value === '__new__') {
+      row.style.display = 'flex';
+      hint.style.display = 'none';
+      input.focus();
+    } else {
+      row.style.display = 'none';
+    }
+  });
+
+  function createCategory() {
+    var name = input.value.trim();
+    if (!name) { input.focus(); return; }
+    addBtn.disabled = true;
+    addBtn.textContent = 'Adding…';
+    fetch("{{ url_for('admin.category_quick_add') }}", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'csrf_token=' + encodeURIComponent("{{ csrf_token() }}") + '&name=' + encodeURIComponent(name)
+    })
+      .then(function (r) { return r.json().then(function (data) { return { ok: r.ok, data: data }; }); })
+      .then(function (res) {
+        if (!res.ok) {
+          hint.textContent = res.data.error || 'Could not add category.';
+          hint.style.color = 'var(--error)';
+          hint.style.display = 'block';
+          return;
+        }
+        var opt = document.createElement('option');
+        opt.value = res.data.id;
+        opt.textContent = res.data.name;
+        select.insertBefore(opt, select.querySelector('option[value="__new__"]'));
+        select.value = res.data.id;
+        row.style.display = 'none';
+        input.value = '';
+        hint.style.display = 'none';
+      })
+      .catch(function () {
+        hint.textContent = 'Could not add category. Check your connection and try again.';
+        hint.style.color = 'var(--error)';
+        hint.style.display = 'block';
+      })
+      .finally(function () {
+        addBtn.disabled = false;
+        addBtn.textContent = 'Add';
+      });
+  }
+
+  addBtn.addEventListener('click', createCategory);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); createCategory(); }
+  });
+})();
 </script>
 {% endblock %}

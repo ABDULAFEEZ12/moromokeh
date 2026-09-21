@@ -279,27 +279,45 @@ def product_delete(admin, product_id):
 
 # ---------------------------------------------------------- categories ----
 
+def _create_category(db, name, description=""):
+    name = name.strip()
+    if not name:
+        return None, "Category name is required."
+    slug = unique_slug(db.categories, name)
+    max_sort = db.categories.count_documents({})
+    doc = {
+        "name": name, "slug": slug, "description": description.strip(),
+        "is_active": True, "sort_order": max_sort,
+        "created_at": datetime.datetime.now(datetime.timezone.utc),
+    }
+    result = db.categories.insert_one(doc)
+    doc["_id"] = result.inserted_id
+    return doc, None
+
+
 @bp.route("/categories", methods=["GET", "POST"])
 @admin_required
 def categories(admin):
     db = get_db()
     if request.method == "POST":
-        name = request.form.get("name", "").strip()
-        description = request.form.get("description", "").strip()
-        if not name:
-            flash("Category name is required.", "error")
-        else:
-            slug = unique_slug(db.categories, name)
-            max_sort = db.categories.count_documents({})
-            db.categories.insert_one({
-                "name": name, "slug": slug, "description": description,
-                "is_active": True, "sort_order": max_sort,
-                "created_at": datetime.datetime.now(datetime.timezone.utc),
-            })
-            flash("Category added.", "success")
+        name = request.form.get("name", "")
+        description = request.form.get("description", "")
+        _, error = _create_category(db, name, description)
+        flash(error or "Category added.", "error" if error else "success")
         return redirect(url_for("admin.categories"))
     cats = convert_cursor(db.categories.find().sort("sort_order", 1))
     return render_template("admin/categories.html", categories=cats)
+
+
+@bp.route("/categories/quick-add", methods=["POST"])
+@admin_required
+def category_quick_add(admin):
+    db = get_db()
+    name = request.form.get("name", "")
+    doc, error = _create_category(db, name)
+    if error:
+        return {"error": error}, 400
+    return {"id": str(doc["_id"]), "name": doc["name"]}
 
 
 @bp.route("/categories/<category_id>/toggle", methods=["POST"])
