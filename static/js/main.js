@@ -15,6 +15,30 @@
     });
   }
 
+  // Mobile search toggle
+  var searchToggle = document.getElementById("searchToggle");
+  var searchOverlay = document.getElementById("searchOverlay");
+  if (searchToggle && searchOverlay) {
+    searchToggle.addEventListener("click", function () {
+      var open = searchOverlay.classList.toggle("open");
+      searchToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) {
+        if (header) searchOverlay.style.top = header.getBoundingClientRect().bottom + "px";
+        var input = searchOverlay.querySelector("input");
+        if (input) setTimeout(function () { input.focus(); }, 250);
+      }
+    });
+  }
+
+  // Sticky header scroll state - subtle border/shadow once the page has scrolled
+  if (header) {
+    var setScrolled = function () {
+      header.classList.toggle("is-scrolled", window.scrollY > 4);
+    };
+    setScrolled();
+    window.addEventListener("scroll", setScrolled, { passive: true });
+  }
+
   // Quantity steppers: <div class="qty-stepper"><button data-step="-1">-</button><input>...<button data-step="1">+</button></div>
   document.querySelectorAll(".qty-stepper").forEach(function (stepper) {
     var input = stepper.querySelector("input");

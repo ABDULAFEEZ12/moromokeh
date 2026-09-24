@@ -34,12 +34,12 @@
         <td>
           <form method="post" action="{{ url_for('admin.category_toggle', category_id=cat._id) }}" style="display:inline;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" style="background:none;border:0;color:var(--primary);cursor:pointer;padding:0;">{{ 'Hide' if cat.is_active else 'Activate' }}</button>
+            <button type="submit" style="background:none;border:0;color:var(--ink);cursor:pointer;padding:0;text-decoration:underline;">{{ 'Hide' if cat.is_active else 'Activate' }}</button>
           </form>
           &middot;
           <form method="post" action="{{ url_for('admin.category_delete', category_id=cat._id) }}" style="display:inline;" onsubmit="return confirm('Delete this category?');">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" style="background:none;border:0;color:var(--error);cursor:pointer;padding:0;">Delete</button>
+            <button type="submit" style="background:none;border:0;color:var(--sale);cursor:pointer;padding:0;text-decoration:underline;">Delete</button>
           </form>
         </td>
       </tr>

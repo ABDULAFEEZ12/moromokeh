@@ -2,10 +2,11 @@
 {% block title %}{{ store_name }} — Fashion & Lifestyle Essentials{% endblock %}
 {% block content %}
 
+{% set tiles = featured[:3] %}
 <section class="hero">
-  <div class="hero-grid">
-    <div class="hero-copy">
-      <p class="eyebrow">Moromokeh Essential Store</p>
+  <div class="hero-bento count-{{ tiles|length if tiles|length <= 3 else 3 }}">
+    <div class="tile tile-text">
+      <p class="eyebrow on-dark">Moromokeh Essential Store</p>
       <h1 class="reveal">Everyday style,<br>beautifully selected.</h1>
       <p class="lead reveal">Stylish, quality and affordable women's fashion and lifestyle essentials — picked to make getting dressed easy.</p>
       <div class="hero-ctas reveal">
@@ -13,21 +14,12 @@
         <a href="{{ url_for('shop.new_arrivals') }}" class="btn btn-outline">New Arrivals</a>
       </div>
     </div>
-    {% set tiles = featured[:3] %}
-    <div class="hero-visual count-{{ tiles|length if tiles|length <= 3 else 3 }}">
-      {% if tiles|length >= 3 %}
-        <div class="tile tile-a"><img src="{{ tiles[0].image_url }}" alt="{{ tiles[0].name }}" loading="eager" fetchpriority="high"></div>
-        <div class="tile tile-b"><img src="{{ tiles[1].image_url }}" alt="{{ tiles[1].name }}" loading="lazy"></div>
-        <div class="tile tile-c"><img src="{{ tiles[2].image_url }}" alt="{{ tiles[2].name }}" loading="lazy"></div>
-      {% elif tiles|length == 2 %}
-        <div class="tile"><img src="{{ tiles[0].image_url }}" alt="{{ tiles[0].name }}" loading="eager" fetchpriority="high"></div>
-        <div class="tile"><img src="{{ tiles[1].image_url }}" alt="{{ tiles[1].name }}" loading="lazy"></div>
-      {% elif tiles|length == 1 %}
-        <div class="tile"><img src="{{ tiles[0].image_url }}" alt="{{ tiles[0].name }}" loading="eager" fetchpriority="high"></div>
-      {% else %}
-        <div class="tile"><span class="placeholder">New pieces are on the way</span></div>
-      {% endif %}
-    </div>
+    {% if tiles|length >= 3 %}
+      <div class="tile tile-a tile-img"><img src="{{ tiles[0].image_url }}" alt="{{ tiles[0].name }}" loading="eager" fetchpriority="high"><span class="badge-corner">New In</span></div>
+      <div class="tile tile-b tile-img"><img src="{{ tiles[1].image_url }}" alt="{{ tiles[1].name }}" loading="lazy"></div>
+    {% elif tiles|length >= 1 %}
+      <div class="tile tile-a tile-img"><img src="{{ tiles[0].image_url }}" alt="{{ tiles[0].name }}" loading="eager" fetchpriority="high"><span class="badge-corner">New In</span></div>
+    {% endif %}
   </div>
 </section>
 

@@ -144,7 +144,7 @@ document.querySelector('.admin-main form').addEventListener('submit', function (
       .then(function (res) {
         if (!res.ok) {
           hint.textContent = res.data.error || 'Could not add category.';
-          hint.style.color = 'var(--error)';
+          hint.style.color = 'var(--sale)';
           hint.style.display = 'block';
           return;
         }
@@ -159,7 +159,7 @@ document.querySelector('.admin-main form').addEventListener('submit', function (
       })
       .catch(function () {
         hint.textContent = 'Could not add category. Check your connection and try again.';
-        hint.style.color = 'var(--error)';
+        hint.style.color = 'var(--sale)';
         hint.style.display = 'block';
       })
       .finally(function () {

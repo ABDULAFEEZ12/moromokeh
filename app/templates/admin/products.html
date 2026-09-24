@@ -7,7 +7,7 @@
 </div>
 
 <form method="get" style="margin-bottom:18px;max-width:320px;">
-  <input type="search" name="q" placeholder="Search products" value="{{ q }}" class="field" style="padding:10px 12px;border:1px solid var(--border-strong);border-radius:3px;width:100%;">
+  <input type="search" name="q" placeholder="Search products" value="{{ q }}" class="field" style="padding:10px 12px;border:1px solid var(--line-strong);border-radius:3px;width:100%;">
 </form>
 
 <div class="admin-card" style="padding:0;">
@@ -20,7 +20,7 @@
         <td>{{ product.name }}</td>
         <td>{{ product.category_name }}</td>
         <td>
-          {% if product.sale_price %}₦{{ '%.0f'|format(product.sale_price) }} <s style="color:var(--text-faint)">₦{{ '%.0f'|format(product.price) }}</s>
+          {% if product.sale_price %}₦{{ '%.0f'|format(product.sale_price) }} <s style="color:var(--ink-faint)">₦{{ '%.0f'|format(product.price) }}</s>
           {% else %}₦{{ '%.0f'|format(product.price) }}{% endif %}
         </td>
         <td>{{ product.stock }}</td>
@@ -34,7 +34,7 @@
           &middot;
           <form method="post" action="{{ url_for('admin.product_delete', product_id=product._id) }}" style="display:inline;" onsubmit="return confirm('Delete this product?');">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" style="background:none;border:0;color:var(--error);cursor:pointer;padding:0;">Delete</button>
+            <button type="submit" style="background:none;border:0;color:var(--sale);cursor:pointer;padding:0;text-decoration:underline;">Delete</button>
           </form>
         </td>
       </tr>

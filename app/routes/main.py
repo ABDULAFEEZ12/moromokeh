@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 
 from app.extensions import get_db, limiter
 from app.models.product import enrich_many
-from app.models.category import list_active_categories
+from app.models.category import list_active_categories, with_display_images
 from app.utils.db import convert_cursor
 
 bp = Blueprint("main", __name__)
@@ -25,7 +25,7 @@ def home():
         featured = enrich_many(convert_cursor(
             db.products.find({"is_published": True}).sort("created_at", -1).limit(8)
         ))
-    categories = list_active_categories(db)
+    categories = with_display_images(db, list_active_categories(db))
     return render_template("home.html", featured=featured, new_arrivals=new_arrivals, categories=categories)
 
 
