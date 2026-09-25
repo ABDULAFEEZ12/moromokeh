@@ -15,10 +15,10 @@
       </div>
     </div>
     {% if tiles|length >= 3 %}
-      <div class="tile tile-a tile-img"><img src="{{ tiles[0].image_url }}" alt="{{ tiles[0].name }}" loading="eager" fetchpriority="high"><span class="badge-corner">New In</span></div>
+      <div class="tile tile-a tile-img"><img src="{{ tiles[0].image_url }}" alt="{{ tiles[0].name }}" loading="eager" fetchpriority="high"><span class="badge-corner"><img src="/static/images/logo.png" alt="">New In</span></div>
       <div class="tile tile-b tile-img"><img src="{{ tiles[1].image_url }}" alt="{{ tiles[1].name }}" loading="lazy"></div>
     {% elif tiles|length >= 1 %}
-      <div class="tile tile-a tile-img"><img src="{{ tiles[0].image_url }}" alt="{{ tiles[0].name }}" loading="eager" fetchpriority="high"><span class="badge-corner">New In</span></div>
+      <div class="tile tile-a tile-img"><img src="{{ tiles[0].image_url }}" alt="{{ tiles[0].name }}" loading="eager" fetchpriority="high"><span class="badge-corner"><img src="/static/images/logo.png" alt="">New In</span></div>
     {% endif %}
   </div>
 </section>

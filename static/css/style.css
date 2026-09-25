@@ -84,8 +84,8 @@ body {
   overflow-x: hidden;
 }
 img, svg { max-width: 100%; display: block; }
-a { color: inherit; text-decoration: none; }
-button { font-family: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
+button { font-family: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 ul { margin: 0; padding: 0; list-style: none; }
 ::selection { background: var(--ink); color: var(--paper); }
 :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
@@ -131,11 +131,6 @@ p { margin: 0; color: var(--ink-soft); }
 .empty-state p { margin: 0 auto; max-width: 42ch; }
 
 /* ---------- 6. Header ---------- */
-.announcement-bar {
-  background: var(--ink); color: var(--ivory); text-align: center; font-size: 11.5px;
-  padding: 8px 16px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
-}
-
 .site-header { position: sticky; top: 0; z-index: 40; background: var(--paper); border-bottom: 1px solid transparent; transition: border-color var(--dur) var(--ease); }
 .site-header.is-scrolled { border-color: var(--line); }
 .header-inner { display: flex; align-items: center; gap: var(--space-5); height: var(--header-h); }
@@ -193,7 +188,7 @@ p { margin: 0; color: var(--ink-soft); }
   .search-toggle { display: inline-flex; }
   .main-nav {
     display: flex; flex-direction: column; position: fixed; top: var(--header-h); left: 0; right: 0; bottom: 0;
-    background: var(--paper); padding: var(--space-5); gap: 0; z-index: 45; overflow-y: auto;
+    background: var(--paper); padding: var(--space-5) var(--space-5) calc(var(--space-5) + env(safe-area-inset-bottom)); gap: 0; z-index: 45; overflow-y: auto;
     transform: translateX(-100%); transition: transform 0.35s var(--ease); visibility: hidden;
   }
   .main-nav.open { transform: translateX(0); visibility: visible; }
@@ -266,9 +261,11 @@ p { margin: 0; color: var(--ink-soft); }
 .hero-bento .tile-img { aspect-ratio: 4/5; }
 .hero-bento .badge-corner {
   position: absolute; bottom: var(--space-4); left: var(--space-4);
+  display: flex; align-items: center; gap: 8px;
   background: rgba(250,248,245,0.94); color: var(--ink);
-  padding: 10px 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 8px 16px 8px 10px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
 }
+.hero-bento .badge-corner img { width: 20px; height: 20px; flex-shrink: 0; }
 .hero-bento .placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-family: var(--font-display); font-size: 15px; text-align: center; padding: var(--space-5); background: var(--tint); }
 
 @media (min-width: 900px) {
@@ -464,7 +461,7 @@ p { margin: 0; color: var(--ink-soft); }
 /* ---------- 19. Utilities ---------- */
 .text-center { text-align: center; }
 .floating-whatsapp {
-  position: fixed; right: 18px; bottom: 18px; z-index: 35; width: 52px; height: 52px; border-radius: 50%;
+  position: fixed; right: 18px; bottom: max(18px, env(safe-area-inset-bottom) + 12px); z-index: 35; width: 52px; height: 52px; border-radius: 50%;
   background: #25d366; color: #fff; display: flex; align-items: center; justify-content: center;
   box-shadow: var(--lift); transition: transform var(--dur) var(--ease);
 }
@@ -525,7 +522,24 @@ table.admin-table img { width: 40px; height: 50px; object-fit: cover; }
   .header-inner { gap: var(--space-3); }
   .wordmark { font-size: 18px; }
   .brand-lockup img { width: 28px; height: 28px; }
+
+  /* Touch targets: 44px is the practical minimum for a thumb, not 38px. */
+  .icon-btn, .cart-link, .nav-toggle, .search-toggle { width: 44px; height: 44px; }
+  .quick-add-btn { width: 42px; height: 42px; }
+  .cat-strip a { padding: 9px 16px; font-size: 12.5px; }
+
+  /* iOS Safari zooms the page on any input/select under 16px - kills the
+     premium feel instantly. Force 16px on every form control on mobile. */
+  .field input, .field select, .field textarea,
+  .sort-row select, .qty-stepper input { font-size: 16px; }
+
+  /* One strong hero image on mobile, not a stack of three - gets people to
+     the products faster and reads as a deliberate choice, not a fallback. */
+  .hero-bento .tile-b { display: none; }
+  .hero-bento.count-3 .tile-a, .hero-bento.count-2 .tile-a { aspect-ratio: 4/4.6; max-height: 78vh; }
   .hero-bento .tile-text { padding: var(--space-6) var(--space-5); text-align: left; }
+  .hero-bento .tile-text h1 { line-height: 1.08; }
+
   .product-grid, .category-grid, .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .footer-inner { grid-template-columns: 1fr; }
   .admin-shell { grid-template-columns: 1fr; }
@@ -543,6 +557,8 @@ table.admin-table img { width: 40px; height: 50px; object-fit: cover; }
   .value-item { padding-top: var(--space-5); }
   .hero-bento .tile-text h1 { font-size: 30px; }
   .section { padding: var(--space-6) 0; }
+  .category-card .label { padding: var(--space-3); font-size: 12.5px; letter-spacing: 0.02em; }
+  .category-card--plain span { font-size: 16px; }
   .pd-actions { flex-direction: column; }
   .cart-line { grid-template-columns: 68px 1fr; }
   .cart-line-actions { grid-column: 1 / -1; flex-direction: row; justify-content: space-between; align-items: center; }
