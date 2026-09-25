@@ -73,6 +73,7 @@
 
   --container: 1320px;
   --header-h: 64px;
+  --bottom-nav-h: 60px;
 }
 
 /* ---------- 3. Reset ---------- */
@@ -515,12 +516,32 @@ p { margin: 0; color: var(--ink-soft); }
 /* ---------- 19. Utilities ---------- */
 .text-center { text-align: center; }
 .floating-whatsapp {
-  position: fixed; right: 18px; bottom: max(18px, env(safe-area-inset-bottom) + 12px); z-index: 35; width: 52px; height: 52px; border-radius: 50%;
+  position: fixed; right: 18px; bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom) + 14px); z-index: 35; width: 52px; height: 52px; border-radius: 50%;
   background: #25d366; color: #fff; display: flex; align-items: center; justify-content: center;
   box-shadow: var(--lift); transition: transform var(--dur) var(--ease);
 }
 .floating-whatsapp:hover { transform: scale(1.06); }
 @media (min-width: 769px) { .floating-whatsapp { right: 28px; bottom: 28px; } }
+
+/* ---------- Bottom mobile nav (app-style tab bar) ---------- */
+.bottom-nav {
+  display: none;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 43;
+  background: rgba(255,255,255,0.98); border-top: 1px solid var(--line); box-shadow: var(--shadow-sm);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bottom-nav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  height: var(--bottom-nav-h); border: 0; background: transparent; color: var(--ink-faint);
+  font-family: inherit; font-size: 10.5px; font-weight: 600; letter-spacing: 0.02em;
+  position: relative; transition: color var(--dur) var(--ease);
+}
+.bottom-nav-item.active { color: var(--ink); }
+.bottom-nav-item .cart-count { position: absolute; top: 2px; left: 50%; right: auto; margin-left: 3px; }
+@media (max-width: 768px) {
+  .bottom-nav { display: flex; }
+  body { padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom)); }
+}
 
 /* ---------- admin (functional, inherits tokens; not part of the storefront redesign) ---------- */
 .admin-shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; align-items: start; }

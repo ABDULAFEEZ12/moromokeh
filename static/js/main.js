@@ -16,6 +16,7 @@
     if (openPanel === "nav" && nav) {
       nav.classList.remove("open");
       toggle.setAttribute("aria-expanded", "false");
+      if (bottomMenuToggle) bottomMenuToggle.classList.remove("active");
     } else if (openPanel === "search" && searchOverlay) {
       searchOverlay.classList.remove("open");
       searchToggle.setAttribute("aria-expanded", "false");
@@ -28,24 +29,29 @@
     if (e.key === "Escape" && openPanel) closeOpenPanel();
   });
 
-  // Mobile nav
+  // Mobile nav - opened from either the header hamburger or the bottom
+  // tab bar's "Menu" button, so the toggling logic lives in one place.
   var toggle = document.getElementById("navToggle");
   var nav = document.getElementById("mainNav");
+  var bottomMenuToggle = document.getElementById("bottomMenuToggle");
   var header = document.querySelector(".site-header");
+  function toggleNav() {
+    if (openPanel === "search") closeOpenPanel();
+    var open = nav.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    if (bottomMenuToggle) bottomMenuToggle.classList.toggle("active", open);
+    if (open) {
+      if (header) nav.style.top = header.getBoundingClientRect().bottom + "px";
+      scrim.classList.add("visible");
+      openPanel = "nav";
+    } else {
+      scrim.classList.remove("visible");
+      openPanel = null;
+    }
+  }
   if (toggle && nav) {
-    toggle.addEventListener("click", function () {
-      if (openPanel === "search") closeOpenPanel();
-      var open = nav.classList.toggle("open");
-      toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      if (open) {
-        if (header) nav.style.top = header.getBoundingClientRect().bottom + "px";
-        scrim.classList.add("visible");
-        openPanel = "nav";
-      } else {
-        scrim.classList.remove("visible");
-        openPanel = null;
-      }
-    });
+    toggle.addEventListener("click", toggleNav);
+    if (bottomMenuToggle) bottomMenuToggle.addEventListener("click", toggleNav);
   }
 
   // Mobile search toggle
@@ -150,16 +156,19 @@
   // Cart count: a quiet pulse when it changes between page loads (added to
   // cart, removed an item, etc). Purely decorative - the number itself is
   // always server-rendered, this just notices a change and animates it.
-  var cartCount = document.getElementById("cartCount");
-  if (cartCount) {
-    var current = cartCount.textContent.trim();
+  // Two badges share the same count (header + bottom tab bar on mobile).
+  var cartCounts = [document.getElementById("cartCount"), document.getElementById("bottomCartCount")].filter(Boolean);
+  if (cartCounts.length) {
+    var current = cartCounts[0].textContent.trim();
     var previous = null;
     try { previous = window.localStorage.getItem("moromokeh_cart_count"); } catch (e) {}
     if (previous !== null && previous !== current) {
-      cartCount.classList.add("pulse");
-      var clearPulse = function () { cartCount.classList.remove("pulse"); };
-      cartCount.addEventListener("animationend", clearPulse, { once: true });
-      setTimeout(clearPulse, 800); // safety net if animationend doesn't fire (e.g. a backgrounded tab)
+      cartCounts.forEach(function (el) {
+        el.classList.add("pulse");
+        var clearPulse = function () { el.classList.remove("pulse"); };
+        el.addEventListener("animationend", clearPulse, { once: true });
+        setTimeout(clearPulse, 800); // safety net if animationend doesn't fire (e.g. a backgrounded tab)
+      });
     }
     try { window.localStorage.setItem("moromokeh_cart_count", current); } catch (e) {}
   }
