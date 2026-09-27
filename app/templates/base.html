@@ -33,8 +33,11 @@
 
     <nav class="main-nav" id="mainNav">
       <a href="{{ url_for('main.home') }}">Home</a>
+      <a href="{{ url_for('shop.category', slug='bum-shorts') }}">Bum Shorts</a>
+      <a href="{{ url_for('shop.category', slug='gown') }}">Gown</a>
       <a href="{{ url_for('shop.category', slug='tops') }}">Tops</a>
-      <a href="{{ url_for('shop.category', slug='jeans') }}">Jeans</a>
+      <a href="{{ url_for('shop.category', slug='2-pc-sets') }}">2-Pc Sets</a>
+      <a href="{{ url_for('shop.category', slug='allo-leggings') }}">Allo Leggings</a>
       <a href="{{ url_for('shop.new_arrivals') }}">New Arrivals</a>
       <a href="{{ url_for('shop.shop') }}">All Shop</a>
     </nav>
@@ -64,8 +67,11 @@
     </form>
   </div>
   <nav class="cat-strip" aria-label="Quick category links">
+    <a href="{{ url_for('shop.category', slug='bum-shorts') }}">Bum Shorts</a>
+    <a href="{{ url_for('shop.category', slug='gown') }}">Gown</a>
     <a href="{{ url_for('shop.category', slug='tops') }}">Tops</a>
-    <a href="{{ url_for('shop.category', slug='jeans') }}">Jeans</a>
+    <a href="{{ url_for('shop.category', slug='2-pc-sets') }}">2-Pc Sets</a>
+    <a href="{{ url_for('shop.category', slug='allo-leggings') }}">Allo Leggings</a>
     <a href="{{ url_for('shop.new_arrivals') }}">New Arrivals</a>
     <a href="{{ url_for('shop.shop') }}">All Shop</a>
   </nav>
